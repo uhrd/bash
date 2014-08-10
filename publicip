@@ -1,0 +1,4 @@
+#!/bin/bash
+#can't exeed 9 hops due to limited header space (37B)
+#ping -R -c 1 ${1:-uio.no} |sed -n '/RR:/{n;s/.*(\(.*\)).*/\1/p}'
+ping -R -c 1 ${1:-uio.no} |sed -n '/RR:/{n;s/.*\(\(\b[0-9]\{1,3\}\.\)\{3\}[0-9]\{1,3\}\).*/\1/p}'
