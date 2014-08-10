@@ -1,0 +1,17 @@
+#!/bin/bash
+trap "stty $(stty -g)" 0
+while declare input=$(dd bs=1 count=1 2>/dev/null)
+do case $input in
+        q) exit;;
+        h) echo rudimentary input handling in bash;;
+        l) ls --color=auto;;
+esac done
+IFS=$'\n'
+hddtemp=($(sudo smartctl -A /dev/sda))
+IFS=$' \t\n'
+for ((i=0;i<=${#hddtemp[@]};i++))
+do      case ${hddtemp[$i]} in
+        194*)   hddtemp=(${hddtemp[$i]})
+        esac
+done
+echo ${hddtemp[-1]}��C
