@@ -1,0 +1,13 @@
+#!/bin/bash
+vncd() { (
+while ! netcat -z localhost 5900
+do x11vnc -q -shared -noxdamage -rfbauth .vnc/passwd
+main=$!
+done &
+
+while readOne "Press q to quit"
+do case $readChar in
+q) kill -3 $main;;
+esac
+done
+ ) }
