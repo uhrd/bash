@@ -125,9 +125,10 @@ fi done
 #GW=192.168.0.2
 #NS=$GW
 #IP=192.168.0.44
-#sudo ifconfig wlan0 up
-#sudo iwconfig wlan0 essid ${1:-$ESSID}
-#sudo ifconfig wlan0 ${2:-$IP}
+IF=wlan0
+#sudo ifconfig $IF up
+#sudo iwconfig $IF essid ${1:-$ESSID}
+#sudo ifconfig $IF ${2:-$IP}
 #sudo route add default gw ${3:-$GW}
 #echo nameserver ${4:-$NS} |sudo tee -a /etc/resolv.conf
 #}
@@ -153,7 +154,7 @@ do x11vnc -shared -noxdamage -rfbauth .vnc/passwd
 done 
 ) }
 iwscan(){
-for l in $(sudo iwlist wlan0 scanning |grep ESSID)
+for l in $(sudo iwlist $IF scanning |grep ESSID)
 do	echo ${l:7:$((${#l}-8))} #strip ESSID:""
 done
 }
