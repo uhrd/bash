@@ -1,0 +1,44 @@
+#!/bin/bash
+s=${1:-2}
+length=$(tput cols)
+stargets=(uio.no vg.no google.no)
+tmpfile=/tmp/pingsweep
+trap "rm -f $tmpfile" 0
+pingsweep(){
+printf "%s" "probing subnet with $t threads"
+rm -f $tmpfile
+for ((g=0;g<255;g+=t))
+do	for ((i=$g;i<g+t;i++))
+	do	if ping -b -c 1 -w 1 192.168.1.$i >/dev/null 2>&1
+		then	printf "192.168.1.$i " >>$tmpfile
+		fi &
+	done
+	sleep 1
+printf .
+done
+targets=(${stargets[@]} $(< $tmpfile))
+printf -v line '%*s' "${length}"
+#printf -v line '%*s' "$((length-5))"
+printf "\r%-${length}b${line// /\\b}" ""
+echo "probing: ${targets[@]}"
+sleep 1
+printf "\r%-${length}b${line// /\\b}" " "
+}
+t=32
+pingsweep
+i=1
+sweep=0
+while :
+do	for h in ${targets[@]}
+	do if ! ping -w 1 -c 1 $h > /dev/null 2>&1
+	then	printf "%s\t%20s\t%s\n" "icmp_seq=$i" "$h:" "ping failed"
+	fi
+	done
+	((i++))
+	printf .
+	sleep $s
+	printf "\r%s\b" " "
+	if [[ $(((i/(1800/s))-sweep)) -ge 1 ]] # probe subnet every 30m
+	then	pingsweep
+	fi
+done
