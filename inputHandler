@@ -1,0 +1,25 @@
+#!/bin/bash
+[[ $1 == -d ]] &&debug=1
+inputHandler(){
+_exitHook(){
+[[ $debug == 1 ]] &&echo reverting stty settings
+[[ $debug == 1 ]] &&echo sttyDefault=$sttyDefault
+stty "$sttyDefault"
+}
+[[ $debug == 1 ]] &&echo debug=$debug
+trap _exitHook 0
+sttyDefault=$(stty -g)
+[[ $debug == 1 ]] &&echo changing stty settings
+stty -icanon min 1 time 0 -echo
+[[ $debug == 1 ]] &&sttyCustom=$(stty -g)
+[[ $debug == 1 ]] &&echo sttyCustom=$sttyCustom 
+while declare input=$(dd bs=1 count=1 2>/dev/null)
+do [[ $debug == 1 ]] &&echo input=$input
+case $input in
+	q) exit;;
+	h) echo rudimentary input handling in bash;;
+	l) ls --color=auto;;
+	
+esac done
+}
+inputHandler
