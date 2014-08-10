@@ -1,0 +1,10 @@
+scan () {
+	(
+		#todo: add USB selection
+		set -e
+		trap "rm tmp.tiff" 0
+		scanimage -d genesys:libusb:008:006 > tmp.tiff
+		convert -rotate 180 tmp.tiff ${1:-tmp}.jpeg
+		feh -. $_
+	)
+}
