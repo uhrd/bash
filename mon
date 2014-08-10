@@ -49,5 +49,7 @@ then	odgt=($(DISPLAY=:0 aticonfig --odgt))
 	odgc=(${odgc#*:})
 	printf "$s1 $s1" fglrx: ${odgt%0}��C
 printf "$s2 $s2 \n" "${odgc[0]}MHz@${odgc[-1]}" "Mem: ${odgc[1]}MHz"
-fi
 printf "$s1 $s1 \n" sda: ${hddtemp[8]},0��C
+df -h
+dmesg |tail
+fi
