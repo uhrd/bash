@@ -1,0 +1,33 @@
+#!/bin/bash
+export DISPLAY=:0.0
+PROGRAMS=(openbox xterm)
+XTERMSESSIONS=(watch.sh powertop htop alsamixer nvlc)
+XTERMSESSIONS=(`which ${XTERMSESSIONS[@]}`)
+WALLPAPER=/usr/share/archlinux/wallpaper/archlinux-deep-aurora.jpg
+if [[ $1 != nox ]]
+then	X -quiet ||exit 1 &
+fi
+while [[ ! -f /tmp/.X0-lock ]]
+do	sleep .1
+done
+for p in ${PROGRAMS[@]}
+do	if [[ $p == xterm ]]
+	then	$p &
+		for s in ${XTERMSESSIONS[@]}
+		do	if [[ $s == *powertop ]]
+			then	$p -e sudo $s &
+			elif [[ $s == *alsamixer ]]
+			then	$p -e "$s -c 0" &
+			else	$p -e $s &
+			fi
+		done	
+	elif [[ $p == openbox ]]
+	then	openbox &
+		sleep 2 
+		setxkbmap no
+		setxkbmap -option terminate:ctrl_alt_bksp
+		feh --bg-scale $WALLPAPER
+	else	$p & 
+	fi
+done
+drsp@localhost ~/bin %                                                         
