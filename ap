@@ -1,0 +1,20 @@
+#!/bin/bash
+wnic=wlp3s0
+nic=enp2s0
+sudo ifconfig $wnic 192.168.1.100
+# dhcp server on eth0:
+#sudo ifconfig eth0 192.168.0.100
+sudo iptables --flush
+sudo iptables --table nat --flush
+sudo iptables --delete-chain
+sudo iptables --table nat --delete-chain
+sudo iptables --table nat --append POSTROUTING --out-interface $nic -j MASQUERADE
+sudo iptables --append FORWARD --in-interface $wnic -j ACCEPT
+sudo sysctl net.ipv4.ip_forward=1
+sudo iptables -t nat -A POSTROUTING -o $nic -j MASQUERADE
+for d in "iptables dnsmasq hostapd"
+do	sudo systemctl ${1:-start} $d
+done
+#for d in "dnsmasq hostapd" 
+#do	sudo rc.d ${1:-start} $d
+#done
